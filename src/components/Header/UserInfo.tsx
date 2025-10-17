@@ -3,7 +3,7 @@ import React from "react";
 
 const UserInfo = () => {
   return (
-    <div className="hidden gap-1 md:flex">
+    <div className="hidden gap-1 lg:flex">
       <User2 />
       Sign in
     </div>

@@ -1,7 +1,13 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Container from "../Layout/Container";
-import { CheckCircle, Shield, Truck } from "lucide-react";
 import { Button } from "../ui/button";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { CheckCircle, Shield, Truck } from "lucide-react";
 
 import pro from "@/assets/Product/pro.png";
 import titan from "@/assets/Product/pro.png"; // TODO : 실제 사진으로 변경
@@ -61,11 +67,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               {/* Peach Color Option */}
               <div
                 className={`cursor-pointer rounded-lg border-2 ${
-                  selectedColor === "peach"
+                  selectedColor === "rose"
                     ? "border-[#10B981]"
                     : "border-transparent"
                 }`}
-                onClick={() => setSelectedColor("peach")}
+                onClick={() => setSelectedColor("rose")}
               >
                 <div className="flex h-20 w-30 items-center justify-center rounded-lg bg-[#F3F4F6]">
                   <div className="h-8 w-8 rounded-full bg-[#FFD1B9]"></div>
@@ -146,13 +152,25 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           {/* Buttons */}
           <div className="flex flex-col gap-3 lg:gap-4">
             {/* TODO : 유저 지갑과 연동 */}
-            <Button size="lg" className="lg:h-14">
+            {/* <Button size="lg" className="lg:h-14">
               Connect Wallet
-            </Button>
-            {/* TODO : 구매는 추후에 */}
-            <Button variant="outline" size="lg" className="lg:h-14" disabled>
-              Buy Now
-            </Button>
+            </Button> */}
+            {/* TODO : 구매는 추후에, 지갑 연결 후 abled */}
+            <HoverCard>
+              <HoverCardTrigger>
+                <Link to={`/checkout/${productType}/${selectedColor}`}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full lg:h-14"
+                    // disabled
+                  >
+                    Buy Now
+                  </Button>
+                </Link>
+              </HoverCardTrigger>
+              <HoverCardContent align="end">Coming Soon</HoverCardContent>
+            </HoverCard>
             <div className="flex flex-col gap-1 text-xs text-[#6B7280] lg:flex-row lg:justify-between lg:text-sm">
               <div className="flex items-center justify-center gap-[6px]">
                 <Truck size={14} color="#6B7280" />
