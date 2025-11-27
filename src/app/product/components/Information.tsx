@@ -1,5 +1,5 @@
 import React from "react";
-import Container from "../Layout/Container";
+import Container from "@/components/Layout/Container";
 import { Book, Plug, Smartphone } from "lucide-react";
 
 interface InformationProps {
@@ -47,7 +47,7 @@ const Information: React.FC<InformationProps> = ({ productType }) => {
           {partsList.map((part, index) => (
             <div
               key={index}
-              className="grid place-items-center gap-4 rounded-lg bg-[#FFFFFF] p-5 lg:gap-5 lg:p-8"
+              className="grid place-items-center gap-4 rounded-lg bg-[#FFFFFF] p-5 shadow-sm lg:gap-5 lg:p-8 lg:shadow-md"
               style={{
                 boxShadow:
                   window.innerWidth >= 1024

@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import Image from "next/image";
 
 import mainImage from "../../assets/Main/img-1.jpg"; // TODO: 메인 이미지 받아야함..
 import logo from "../../assets/Main/airam-e-series-white.png";
@@ -9,7 +12,7 @@ const Hero = () => {
       <div
         className="relative flex w-full flex-col bg-black/90 px-6 py-24 text-center text-white md:px-16 md:py-60"
         style={{
-          backgroundImage: `url(${mainImage})`,
+          backgroundImage: `url(${mainImage.src || mainImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -34,7 +37,7 @@ const Hero = () => {
             <br /> particulate matter, CO₂, harmful chemicals, temperature, and
             humidity in real time.
           </p>
-          <img
+          <Image
             src={logo}
             alt="AIRAM"
             className="mt-4 h-10 object-contain md:h-18"

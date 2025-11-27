@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import Image from "next/image";
 
 import colorGray from "../../assets/Main/gray.png";
 import colorRose from "../../assets/Main/rosegold.png";
@@ -12,7 +15,7 @@ const ColorLine = () => {
       <div className="grid w-full grid-cols-2 gap-4 md:max-w-[1320px]">
         <div className="flex flex-col items-center gap-4">
           <div className="h-48 w-full overflow-hidden md:h-80">
-            <img
+            <Image
               src={colorGray}
               alt="colorGray"
               className="h-full w-full object-contain"
@@ -28,7 +31,7 @@ const ColorLine = () => {
         </div>
         <div className="flex flex-col items-center gap-4">
           <div className="h-48 w-full overflow-hidden md:h-80">
-            <img
+            <Image
               src={colorRose}
               alt="colorRose"
               className="h-full w-full object-contain"

@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import Image from "next/image";
 
 import modelPro from "../../assets/Main/pro.png";
 import modelTitan from "../../assets/Main/titan.png";
@@ -12,22 +15,22 @@ const ModelLine = () => {
       <div className="text-xl font-semibold md:text-3xl">MODEL LINE</div>
       <span className="h-[2px] w-12 bg-blue-400 md:w-32" />
       <div className="my-8 hidden flex-col items-center gap-8 md:flex">
-        <img src={quoteLeft} className="w-8" />
+        <Image src={quoteLeft} alt="quoteLeft" className="w-8" />
         <span className="text-2xl">
           AIRAM cares about the environment where our family stays.
         </span>
-        <img src={quoteRight} className="w-8" />
+        <Image src={quoteRight} alt="quoteRight" className="w-8" />
       </div>
       <div className="grid w-full grid-cols-2 gap-4 md:max-w-[1320px]">
         <div className="flex flex-col items-center gap-2 md:gap-6">
           <div className="h-48 w-full overflow-hidden md:h-80">
-            <img
+            <Image
               src={modelPro}
               alt="SAP-500E"
               className="h-full w-full object-contain"
             />
           </div>
-          <img
+          <Image
             src={logo}
             alt="AIRAM"
             className="h-6 object-contain md:h-13"
@@ -43,13 +46,13 @@ const ModelLine = () => {
         </div>
         <div className="flex flex-col items-center gap-2 md:gap-6">
           <div className="h-48 w-full overflow-hidden md:h-80">
-            <img
+            <Image
               src={modelTitan}
               alt="SAP-700E"
               className="h-full w-full object-contain"
             />
           </div>
-          <img
+          <Image
             src={logo}
             alt="AIRAM"
             className="h-6 object-contain md:h-13"

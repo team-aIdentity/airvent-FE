@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Brain, Coins, Network } from "lucide-react";
 

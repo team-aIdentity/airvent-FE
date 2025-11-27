@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
   NavigationMenu,
@@ -70,13 +73,13 @@ const navItems: NavItem[] = [
 ];
 
 const Header = () => {
-  const location = useLocation();
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalMode, setModalMode] = useState<"login" | "signup">("login");
 
   const isActive = (path: string) => {
-    return location.pathname == path;
+    return pathname === path;
   };
 
   const handleLinkClick = (item: NavItem) => {
@@ -96,8 +99,8 @@ const Header = () => {
           {/* 로고 */}
           <div className="w-[30px] lg:hidden"></div>
           <div className="flex items-center lg:flex-none">
-            <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>
-              <img src={logo} className="h-10 lg:h-14" />
+            <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
+              <img src={logo.src || logo} className="h-10 lg:h-14" alt="Airvent" />
             </Link>
           </div>
 
@@ -119,7 +122,7 @@ const Header = () => {
                               <NavigationMenuLink key={subIndex} asChild>
                                 {subItem.path ? (
                                   <Link
-                                    to={subItem.path}
+                                    href={subItem.path}
                                     className={`hover:text-accent-foreground focus:text-accent-foreground block space-y-1 p-4 text-center leading-none text-[#6B7280] no-underline transition-colors outline-none select-none ${
                                       isActive(subItem.path)
                                         ? "text-accent-foreground"
@@ -150,7 +153,7 @@ const Header = () => {
                       <NavigationMenuLink asChild>
                         {nav.path ? (
                           <Link
-                            to={nav.path}
+                            href={nav.path}
                             className={`hover:text-accent-foreground focus:text-accent-foreground block flex h-9 justify-center space-y-1 p-3 leading-none text-[#6B7280] no-underline transition-colors outline-none select-none ${
                               isActive(nav.path) ? "text-accent-foreground" : ""
                             }`}
@@ -216,7 +219,7 @@ const Header = () => {
                           <div key={subIndex}>
                             {subItem.path ? (
                               <Link
-                                to={subItem.path}
+                                href={subItem.path}
                                 className={`block rounded-md px-3 py-2 text-sm transition-colors ${
                                   isActive(subItem.path)
                                     ? "bg-accent text-accent-foreground"
@@ -246,7 +249,7 @@ const Header = () => {
                     <div>
                       {nav.path ? (
                         <Link
-                          to={nav.path}
+                          href={nav.path}
                           className={`block rounded-md px-3 py-2 text-base font-medium text-gray-700 transition-colors ${
                             isActive(nav.path)
                               ? "bg-accent text-accent-foreground"

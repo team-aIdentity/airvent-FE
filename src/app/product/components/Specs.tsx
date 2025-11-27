@@ -1,5 +1,9 @@
+"use client";
+
 import React from "react";
-import Container from "../Layout/Container";
+import Image from "next/image";
+
+import Container from "@/components/Layout/Container";
 
 import pro from "@/assets/Product/specs_pro.png";
 import titan from "@/assets/Product/specs_titan.png";
@@ -22,7 +26,7 @@ const Specs: React.FC<SpecsProps> = ({ productType }) => {
           </div>
         </div>
         {/* image */}
-        <img src={productType === "pro" ? pro : titan} />
+        <Image src={productType === "pro" ? pro : titan} alt="specs" />
       </div>
     </Container>
   );
