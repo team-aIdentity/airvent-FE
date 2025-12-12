@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import Image from "next/image";
 
 import modelProDetail from "../../assets/Main/pro-detail.png";
 import modelTitanDetail from "../../assets/Main/titan-detail.png";
@@ -13,7 +16,7 @@ const Detail = () => {
           <p className="text-xl font-semibold md:text-3xl">SAP-500E</p>
           <span className="h-[1px] w-full bg-black" />
           <div className="w-full overflow-hidden">
-            <img
+            <Image
               src={modelProDetail}
               alt="SAP-500E"
               className="h-full w-full object-contain"
@@ -24,7 +27,7 @@ const Detail = () => {
           <p className="text-xl font-semibold md:text-3xl">SAP-700E</p>
           <span className="h-[1px] w-full bg-black" />
           <div className="w-full overflow-hidden">
-            <img
+            <Image
               src={modelTitanDetail}
               alt="SAP-700E"
               className="h-full w-full object-contain"

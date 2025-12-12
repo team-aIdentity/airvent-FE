@@ -1,5 +1,9 @@
+"use client";
+
 import React from "react";
-import { useParams } from "react-router-dom";
+import Image from "next/image";
+
+import { useParams } from "next/navigation";
 import { useProduct } from "@/hooks/useProduct";
 import { HelioCheckout, type HelioEmbedConfig } from "@heliofi/checkout-react";
 import {
@@ -8,11 +12,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 
 import pro from "@/assets/Product/pro.png";
-import titan from "@/assets/Product/pro.png"; // TODO : 실제 사진으로 변경
+import titan from "@/assets/Product/pro.png";
 import { Headphones, ShieldCheck } from "lucide-react";
-import { Button } from "../ui/button";
 
 const paylinkIds: Record<string, string> = {
   pro: "68edd648092237f8976bc61b",
@@ -20,7 +24,8 @@ const paylinkIds: Record<string, string> = {
 };
 
 const Payment = ({ onNext }: { onNext: () => void }) => {
-  const { color } = useParams();
+  const params = useParams();
+  const color = params?.color as string;
   const { product, productType, isLoading } = useProduct();
 
   if (isLoading) {
@@ -61,7 +66,11 @@ const Payment = ({ onNext }: { onNext: () => void }) => {
             <div className="flex flex-col gap-4">
               <div className="flex justify-between gap-3">
                 <div className="flex h-15 w-15 min-w-15 items-center justify-center overflow-hidden rounded-md border border-[#E5E7EB] bg-[#F9FAFB] p-2">
-                  <img src={productType === "pro" ? pro : titan} />
+                  <Image
+                    src={productType === "pro" ? pro : titan}
+                    alt="product"
+                    className="!scale-150"
+                  />
                 </div>
                 <div className="flex w-full flex-col items-start justify-center text-sm">
                   <div className="font-semibold">
@@ -134,6 +143,7 @@ const Payment = ({ onNext }: { onNext: () => void }) => {
 
       <span className="border-b border-[#E5E7EB]" />
 
+      {/* Notes */}
       <div className="flex flex-col gap-3 py-5">
         <div className="flex items-center gap-3 text-sm font-semibold">
           <Headphones size={18} /> Need Help?

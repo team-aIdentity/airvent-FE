@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import Image from "next/image";
 
 import img1 from "../../assets/Main/img-1.jpg";
 import img2 from "../../assets/Main/img-2.jpg";
@@ -21,7 +24,7 @@ const Feature = () => {
         {/* FEATURES 1 */}
         <div className="grid items-center gap-6 md:grid-cols-2 md:gap-0">
           <div className="order-1 md:order-1">
-            <img src={img1} alt="img" className="w-full object-cover" />
+            <Image src={img1} alt="img" className="w-full object-cover" />
           </div>
           <div className="order-2 flex flex-col gap-2 md:order-2 md:gap-6 md:px-16">
             <Title>Minimal Round Edge Design</Title>
@@ -37,7 +40,7 @@ const Feature = () => {
         {/* FEATURES 2 */}
         <div className="grid items-center gap-6 md:grid-cols-2 md:gap-0">
           <div className="order-1 md:order-2">
-            <img src={img2} alt="img" className="w-full object-cover" />
+            <Image src={img2} alt="img" className="w-full object-cover" />
           </div>
           <div className="order-2 flex flex-col gap-2 md:order-1 md:gap-6 md:px-16 md:text-right">
             <Title>Intuitive Signal Lighting</Title>
@@ -53,7 +56,7 @@ const Feature = () => {
         {/* FEATURES 3 */}
         <div className="grid items-center gap-6 md:grid-cols-2 md:gap-0">
           <div className="order-1 md:order-1">
-            <img src={img3} alt="img" className="w-full object-cover" />
+            <Image src={img3} alt="img" className="w-full object-cover" />
           </div>
           <div className="order-2 flex flex-col gap-2 md:order-2 md:gap-6 md:px-16">
             <Title>Sensor Detects Even Ultrafine Dust</Title>
@@ -70,7 +73,7 @@ const Feature = () => {
         {/* FEATURES 4 */}
         <div className="grid items-center gap-6 md:grid-cols-2 md:gap-0">
           <div className="order-1 md:order-2">
-            <img src={img4} alt="img" className="w-full object-cover" />
+            <Image src={img4} alt="img" className="w-full object-cover" />
           </div>
           <div className="order-2 flex flex-col gap-2 md:order-1 md:gap-6 md:px-16 md:text-right">
             <Title>User-Centric Design</Title>
@@ -84,7 +87,7 @@ const Feature = () => {
         {/* FEATURES 5 */}
         <div className="grid items-center gap-6 md:grid-cols-2 md:gap-0">
           <div className="order-1 md:order-1">
-            <img src={img5} alt="img" className="w-full object-cover" />
+            <Image src={img5} alt="img" className="w-full object-cover" />
           </div>
           <div className="order-2 flex flex-col gap-2 md:order-2 md:gap-6 md:px-16">
             <Title>Multiple Screen Modes</Title>
@@ -98,7 +101,7 @@ const Feature = () => {
         {/* FEATURES 6 */}
         <div className="grid items-center gap-6 md:grid-cols-2 md:gap-0">
           <div className="order-1 md:order-2">
-            <img src={img6} alt="img" className="w-full object-cover" />
+            <Image src={img6} alt="img" className="w-full object-cover" />
           </div>
           <div className="order-2 flex flex-col gap-2 md:order-1 md:gap-6 md:px-16 md:text-right">
             <Title>Advanced IoT Capabilities</Title>

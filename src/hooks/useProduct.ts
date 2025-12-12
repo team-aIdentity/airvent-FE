@@ -1,8 +1,11 @@
-import { useParams } from "react-router-dom";
+"use client";
+
+import { useParams } from "next/navigation";
 import { PRODUCTS, type ProductType } from "../constants/products";
 
 export const useProduct = () => {
-  const { productType } = useParams<{ productType: string }>();
+  const params = useParams();
+  const productType = params?.productType as string;
   const product = PRODUCTS[productType as ProductType];
 
   return {

@@ -1,7 +1,11 @@
+"use client";
+
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import Container from "../Layout/Container";
-import { Button } from "../ui/button";
+import Link from "next/link";
+import Image from "next/image";
+
+import Container from "@/components/Layout/Container";
+import { Button } from "@/components/ui/button";
 import {
   HoverCard,
   HoverCardContent,
@@ -10,7 +14,7 @@ import {
 import { CheckCircle, Shield, Truck } from "lucide-react";
 
 import pro from "@/assets/Product/pro.png";
-import titan from "@/assets/Product/titan.png"; // TODO : 실제 사진으로 변경
+import titan from "@/assets/Product/titan.png";
 
 interface ProductDetailProps {
   productType: string;
@@ -37,7 +41,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
         <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
           {/* Image Container */}
           <div className="overflow-hidden rounded-xl border border-[1px] border-[#E5E7EB] bg-white p-8">
-            <img
+            <Image
               src={productType === "pro" ? pro : titan}
               alt="Air Quality Monitor"
               className="h-auto w-full scale-150"
@@ -151,25 +155,20 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
           {/* Buttons */}
           <div className="flex flex-col gap-3 lg:gap-4">
-            {/* TODO : 유저 지갑과 연동 */}
-            {/* <Button size="lg" className="lg:h-14">
-              Connect Wallet
-            </Button> */}
-            {/* TODO : 구매는 추후에, 지갑 연결 후 abled */}
             <HoverCard>
-              <HoverCardTrigger>
-                {/* <Link to={`/checkout/${productType}/${selectedColor}`}> */}
+              {/* <HoverCardTrigger> */}
+              <Link href={`/checkout/${productType}/${selectedColor}`}>
                 <Button
                   variant="outline"
                   size="lg"
                   className="w-full lg:h-14"
-                  disabled
+                  // disabled
                 >
-                  December OpenSale
+                  Buy Now
                 </Button>
-                {/* </Link> */}
-              </HoverCardTrigger>
-              <HoverCardContent align="end">Coming Soon</HoverCardContent>
+              </Link>
+              {/* </HoverCardTrigger> */}
+              {/* <HoverCardContent align="end">Coming Soon</HoverCardContent> */}
             </HoverCard>
             <div className="flex flex-col gap-1 text-xs text-[#6B7280] lg:flex-row lg:justify-between lg:text-sm">
               <div className="flex items-center justify-center gap-[6px]">
