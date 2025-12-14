@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  nickname      String?
+  role          String    @default("user") // "user" or "admin"
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  orders        Order[]
+}
+
+model Order {
+  id              String   @id @default(cuid())
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id])
+  
+  productType     String   // "pro" or "titan"
+  color           String   // "gray" or "rosegold"
+  price           Float
+  
+  transactionId   String?  // Helio transaction ID
+  status          String   @default("pending") // "pending", "confirmed", "cancelled", "shipping", "delivered"
+  
+  shipping        Shipping?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Shipping {
+  id                    String   @id @default(cuid())
+  orderId               String   @unique
+  order                 Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  // Account Information
+  email                 String
+  
+  // Wallet Configuration
+  evmWalletAddress      String?
+  solanaWalletAddress   String?
+  
+  // Shipping Address
+  country               String
+  residentRegNumber     String?
+  personalClearanceNum  String
+  firstName             String
+  lastName              String
+  dateOfBirth           String
+  streetAddress         String
+  apartment             String?
+  city                  String
+  state                 String?
+  postalCode            String
+  phone                 String
+
+  // Shipping Tracking Information (Admin에서 관리)
+  trackingNumber        String?  // 택배 송장번호
+  carrier               String?  // 택배사
+  shippedAt             DateTime? // 배송 시작일
+  deliveredAt           DateTime? // 배송 완료일
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

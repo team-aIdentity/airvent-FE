@@ -1,9 +1,14 @@
 import React from "react";
+import Link from "next/link";
 import Image from "next/image";
 
 import { useParams } from "next/navigation";
 import { useProduct } from "@/hooks/useProduct";
+import { useUser } from "@/contexts/UserContext";
+
 import { HelioCheckout, type HelioEmbedConfig } from "@heliofi/checkout-react";
+
+import { Loading } from "@/components/Layout/Loading";
 import {
   Accordion,
   AccordionContent,
@@ -17,41 +22,58 @@ import titan from "@/assets/Product/pro.png";
 import { Clock, Coins, Headphones, Shield, ShieldCheck } from "lucide-react";
 
 const paylinkIds: Record<string, string> = {
-  pro: "68edd648092237f8976bc61b",
-  titan: "68edd648092237f8976bc61b", // TODO : 실제 값으로 변경
+  pro: "693d3f2818f9a67399b0e8c9",
+  titan: "693d4848cc245795ac759af4",
+  test: "693d49dbbdf72403b1d11693",
 };
 
-const Payment = ({ onNext }: { onNext: () => void }) => {
+const Payment = ({ onNext }: { onNext: (orderId: string) => void }) => {
   const params = useParams();
   const color = params?.color as string;
   const { product, productType, isLoading } = useProduct();
+  const { user, isLoading: isUserLoading } = useUser();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (isLoading || isUserLoading || !user) {
+    return <Loading />;
   }
 
   const helioConfig: HelioEmbedConfig = {
-    paylinkId: paylinkIds[productType] || paylinkIds["pro"],
+    // paylinkId: paylinkIds[productType] || paylinkIds["test"],
+    paylinkId: paylinkIds["test"],
+    theme: { themeMode: "light" },
+    primaryColor: "#10B981",
+    neutralColor: "#5A6578",
+    display: "inline",
     customTexts: {
       mainButtonTitle: "Checkout",
       payButtonTitle: "Pay Now",
     },
-    theme: {
-      themeMode: "light",
-    },
-    primaryColor: "#10B981",
-    neutralColor: "#10B981",
-    backgroundColor: "#F0FDF4",
-    amount: "499",
-    onSuccess: async () => {
+    onSuccess: async (txData) => {
       try {
-        // TODO : 결제 성공 후 처리 로직 추가 (예: 데이터베이스에 결제 이력 저장)
-        onNext();
+        const res = await fetch("/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: user.id,
+            productType,
+            color,
+            price: Math.round(
+              product.price - product.price * (product.discount / 100),
+            ),
+            transactionId: txData?.transaction,
+            status: "confirmed",
+          }),
+        });
+        if (!res.ok) throw new Error("Failed to create order");
+        const data = await res.json();
+        onNext(data.order.id);
       } catch (error) {
         console.error("Error during onSuccess:", error);
       }
     },
-    onError: () => {},
+    onError: () =>
+      alert("An error occurred during the payment process. Please try again."),
+    onCancel: () => alert("Payment has been cancelled."),
   };
 
   return (
@@ -141,7 +163,9 @@ const Payment = ({ onNext }: { onNext: () => void }) => {
                     Contact our support team if you have any questions about
                     your order or DePIN setup.{" "}
                   </div>
-                  <Button>Get Support</Button>
+                  <Link href="mailto:info@airventinc.co.kr" className="w-full">
+                    <Button className="w-full">Get Support</Button>
+                  </Link>
                 </div>
               </div>
             </AccordionContent>

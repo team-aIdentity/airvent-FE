@@ -2,9 +2,9 @@ import React from "react";
 
 const SpecTable500E = () => {
   return (
-    <div className="flex w-full flex-col gap-8 md:max-w-[1320px]">
+    <div className="flex w-full flex-col gap-8 lg:max-w-[1320px]">
       <div className="flex w-full flex-col gap-4 overflow-x-auto">
-        <table className="w-full border-collapse text-center text-sm md:text-base [&_td]:border-2 [&_td]:p-2">
+        <table className="w-full border-collapse text-center text-sm lg:text-base [&_td]:border-2 [&_td]:p-2">
           <tbody>
             <tr className="bg-gray-100 text-gray-800">
               <td colSpan={2}>
@@ -201,7 +201,7 @@ const SpecTable500E = () => {
             </tr>
           </tbody>
         </table>
-        <p className="text-sm md:text-base">
+        <p className="text-sm lg:text-base">
           1) % means accuracy to full scale. %reading refers to accuracy based
           on reading value, which provides more precise results.
         </p>

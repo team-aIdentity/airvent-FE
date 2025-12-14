@@ -15,6 +15,7 @@ import { CheckCircle, Shield, Truck } from "lucide-react";
 
 import pro from "@/assets/Product/pro.png";
 import titan from "@/assets/Product/titan.png";
+import { useUser } from "@/contexts/UserContext";
 
 interface ProductDetailProps {
   productType: string;
@@ -33,6 +34,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   discount,
   keyFeatures,
 }) => {
+  const { user, isLoading } = useUser();
   const [selectedColor, setSelectedColor] = useState("gray");
 
   return (
@@ -156,19 +158,33 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           {/* Buttons */}
           <div className="flex flex-col gap-3 lg:gap-4">
             <HoverCard>
-              {/* <HoverCardTrigger> */}
-              <Link href={`/checkout/${productType}/${selectedColor}`}>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full lg:h-14"
-                  // disabled
-                >
-                  Buy Now
-                </Button>
-              </Link>
-              {/* </HoverCardTrigger> */}
-              {/* <HoverCardContent align="end">Coming Soon</HoverCardContent> */}
+              {!user || isLoading ? (
+                <>
+                  <HoverCardTrigger>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full lg:h-14"
+                      disabled
+                    >
+                      Buy Now
+                    </Button>
+                  </HoverCardTrigger>
+                  <HoverCardContent align="end">
+                    <div>Please log in first to purchase.</div>
+                  </HoverCardContent>
+                </>
+              ) : (
+                <Link href={`/checkout/${productType}/${selectedColor}`}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full lg:h-14"
+                  >
+                    Buy Now
+                  </Button>
+                </Link>
+              )}
             </HoverCard>
             <div className="flex flex-col gap-1 text-xs text-[#6B7280] lg:flex-row lg:justify-between lg:text-sm">
               <div className="flex items-center justify-center gap-[6px]">

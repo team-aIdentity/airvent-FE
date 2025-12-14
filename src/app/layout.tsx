@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { UserProvider } from "@/contexts/UserContext";
 import Header from "@/components/Header/Header";
 
 export const metadata: Metadata = {
@@ -18,8 +19,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Header />
-        {children}
+        <UserProvider>
+          <Header />
+          {children}
+        </UserProvider>
       </body>
     </html>
   );

@@ -3,7 +3,10 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@/contexts/UserContext";
 
+import LoginSignupModal from "../Modal/LoginSignupModal";
+import UserInfo from "./UserInfo";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,8 +18,6 @@ import {
 import { Menu, X } from "lucide-react";
 
 import logo from "@/assets/Header/header_1.svg";
-import UserInfo from "./UserInfo";
-import LoginSignupModal from "../Modal/LoginSignupModal";
 
 type NavItem = {
   name: string;
@@ -45,10 +46,10 @@ const navItems: NavItem[] = [
       },
     ],
   },
-  // {
-  //   name: "Dash Board",
-  //   path: "/dashboard",
-  // },
+  {
+    name: "Dash Board",
+    path: "/dashboard",
+  },
   {
     name: "Q&A",
     url: "mailto:info@airventinc.co.kr",
@@ -74,6 +75,7 @@ const navItems: NavItem[] = [
 
 const Header = () => {
   const pathname = usePathname();
+  const { user, isLoading } = useUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalMode, setModalMode] = useState<"login" | "signup">("login");
@@ -93,14 +95,18 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <header className="sticky top-0 z-50 w-full bg-white backdrop-blur supports-[backdrop-filter]:bg-white/90">
       <div className="w-full px-4 lg:px-20">
         <div className="flex h-20 items-center justify-between lg:h-36">
           {/* 로고 */}
           <div className="w-[30px] lg:hidden"></div>
           <div className="flex items-center lg:flex-none">
             <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-              <img src={logo.src || logo} className="h-10 lg:h-14" alt="Airvent" />
+              <img
+                src={logo.src || logo}
+                className="h-10 lg:h-14"
+                alt="Airvent"
+              />
             </Link>
           </div>
 
@@ -175,13 +181,18 @@ const Header = () => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            {/* <LoginSignupModal
-              setIsMobileMenuOpen={setIsMobileMenuOpen}
-              isModalOpen={isModalOpen}
-              setIsModalOpen={setIsModalOpen}
-              mode={modalMode}
-              setMode={setModalMode}
-            /> */}
+            {!isLoading &&
+              (user ? (
+                <UserInfo />
+              ) : (
+                <LoginSignupModal
+                  setIsMobileMenuOpen={setIsMobileMenuOpen}
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}
+                  mode={modalMode}
+                  setMode={setModalMode}
+                />
+              ))}
           </div>
 
           {/* 모바일 메뉴 버튼 */}
@@ -199,13 +210,18 @@ const Header = () => {
           <div className="lg:hidden">
             <div className="space-y-1 border-t bg-white px-2 pt-4 pb-3">
               <div>
-                {/* <LoginSignupModal
-                  setIsMobileMenuOpen={setIsMobileMenuOpen}
-                  isModalOpen={isModalOpen}
-                  setIsModalOpen={setIsModalOpen}
-                  mode={modalMode}
-                  setMode={setModalMode}
-                /> */}
+                {!isLoading &&
+                  (user ? (
+                    <UserInfo />
+                  ) : (
+                    <LoginSignupModal
+                      setIsMobileMenuOpen={setIsMobileMenuOpen}
+                      isModalOpen={isModalOpen}
+                      setIsModalOpen={setIsModalOpen}
+                      mode={modalMode}
+                      setMode={setModalMode}
+                    />
+                  ))}
               </div>
               {navItems.map((nav, index) => (
                 <div key={index}>

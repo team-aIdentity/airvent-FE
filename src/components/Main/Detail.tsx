@@ -8,12 +8,12 @@ import modelTitanDetail from "../../assets/Main/titan-detail.png";
 
 const Detail = () => {
   return (
-    <div className="flex flex-col items-center justify-center gap-8 bg-[#ececec] px-4 py-16 md:gap-12 md:py-24">
-      <div className="text-xl font-semibold md:text-3xl">COMPONENT NAMES</div>
-      <span className="h-[2px] w-12 bg-blue-400 md:w-32" />
-      <div className="flex w-full flex-col gap-4 md:max-w-[1320px]">
+    <div className="flex flex-col items-center justify-center gap-8 bg-[#ececec] px-4 py-16 lg:gap-12 lg:py-24">
+      <div className="text-xl font-semibold lg:text-3xl">COMPONENT NAMES</div>
+      <span className="h-[2px] w-12 bg-blue-400 lg:w-32" />
+      <div className="flex w-full flex-col gap-4 lg:max-w-[1320px]">
         <div className="flex w-full flex-col gap-2">
-          <p className="text-xl font-semibold md:text-3xl">SAP-500E</p>
+          <p className="text-xl font-semibold lg:text-3xl">SAP-500E</p>
           <span className="h-[1px] w-full bg-black" />
           <div className="w-full overflow-hidden">
             <Image
@@ -24,7 +24,7 @@ const Detail = () => {
           </div>
         </div>
         <div className="flex w-full flex-col gap-2">
-          <p className="text-xl font-semibold md:text-3xl">SAP-700E</p>
+          <p className="text-xl font-semibold lg:text-3xl">SAP-700E</p>
           <span className="h-[1px] w-full bg-black" />
           <div className="w-full overflow-hidden">
             <Image
