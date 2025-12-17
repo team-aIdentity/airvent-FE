@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@/contexts/UserContext";
@@ -78,7 +78,18 @@ const Header = () => {
   const { user, isLoading } = useUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [modalMode, setModalMode] = useState<"login" | "signup">("login");
+  const [modalMode, setModalMode] = useState<
+    "login" | "signup" | "forgotPassword"
+  >("login");
+
+  const filteredNavItems = useMemo(() => {
+    return navItems.filter((nav) => {
+      if (nav.path === "/dashboard") {
+        return !!user;
+      }
+      return true;
+    });
+  }, [user]);
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -114,7 +125,7 @@ const Header = () => {
             {/* PC 네비게이션 */}
             <NavigationMenu viewport={false}>
               <NavigationMenuList>
-                {navItems.map((nav, index) => (
+                {filteredNavItems.map((nav, index) => (
                   <NavigationMenuItem key={index}>
                     {nav.content ? (
                       // 드롭다운 메뉴가 있는 경우
@@ -181,18 +192,17 @@ const Header = () => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            {!isLoading &&
-              (user ? (
-                <UserInfo />
-              ) : (
-                <LoginSignupModal
-                  setIsMobileMenuOpen={setIsMobileMenuOpen}
-                  isModalOpen={isModalOpen}
-                  setIsModalOpen={setIsModalOpen}
-                  mode={modalMode}
-                  setMode={setModalMode}
-                />
-              ))}
+            {!isLoading && user ? (
+              <UserInfo />
+            ) : (
+              <LoginSignupModal
+                setIsMobileMenuOpen={setIsMobileMenuOpen}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                mode={modalMode}
+                setMode={setModalMode}
+              />
+            )}
           </div>
 
           {/* 모바일 메뉴 버튼 */}
@@ -210,20 +220,19 @@ const Header = () => {
           <div className="lg:hidden">
             <div className="space-y-1 border-t bg-white px-2 pt-4 pb-3">
               <div>
-                {!isLoading &&
-                  (user ? (
-                    <UserInfo />
-                  ) : (
-                    <LoginSignupModal
-                      setIsMobileMenuOpen={setIsMobileMenuOpen}
-                      isModalOpen={isModalOpen}
-                      setIsModalOpen={setIsModalOpen}
-                      mode={modalMode}
-                      setMode={setModalMode}
-                    />
-                  ))}
+                {!isLoading && user ? (
+                  <UserInfo />
+                ) : (
+                  <LoginSignupModal
+                    setIsMobileMenuOpen={setIsMobileMenuOpen}
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
+                    mode={modalMode}
+                    setMode={setModalMode}
+                  />
+                )}
               </div>
-              {navItems.map((nav, index) => (
+              {filteredNavItems.map((nav, index) => (
                 <div key={index}>
                   {nav.content ? (
                     <div>

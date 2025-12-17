@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import pro from "@/assets/Product/pro.png";
-import titan from "@/assets/Product/pro.png"; // TODO : 실제 사진으로 변경
-import Container from "../Layout/Container";
+import titan from "@/assets/Product/titan.png";
+import Container from "@/components/Layout/Container";
 
 interface ColorSelectProps {
   productType: string;
@@ -15,7 +16,7 @@ const ColorSelect: React.FC<ColorSelectProps> = ({ productType }) => {
       <div className="mx-auto flex w-full max-w-sm flex-col gap-6">
         {/* Image Container */}
         <div className="rounded-xl border border-[1px] border-[#E5E7EB] bg-white p-8">
-          <img
+          <Image
             src={productType === "pro" ? pro : titan}
             alt="Air Quality Monitor"
             className="h-auto w-full"

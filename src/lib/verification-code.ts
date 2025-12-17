@@ -65,3 +65,23 @@ export function verifyAndDeleteCode(email: string, code: string): boolean {
   verificationCodes.delete(email);
   return true;
 }
+
+// 인증 코드 검증 (삭제하지 않음 - 비밀번호 재설정용)
+export function verifyCodeWithoutDelete(email: string, code: string): boolean {
+  cleanupExpiredCodes();
+  const verificationCodes = getVerificationCodes();
+  const stored = verificationCodes.get(email);
+
+  if (!stored) {
+    return false;
+  }
+
+  // 만료 확인
+  if (Date.now() > stored.expiresAt) {
+    verificationCodes.delete(email);
+    return false;
+  }
+
+  // 코드 일치 확인
+  return stored.code === code;
+}

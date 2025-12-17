@@ -19,7 +19,7 @@ interface LoginSignupModalProps {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
   mode: string;
-  setMode: (mode: "login" | "signup") => void;
+  setMode: (mode: "login" | "signup" | "forgotPassword") => void;
 }
 
 type FieldErrors = {
@@ -36,6 +36,8 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
   mode,
   setMode,
 }) => {
+  console.log(mode);
+  // signup & login
   const { login, signup } = useUser();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -45,8 +47,14 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
   const [showRePassword, setShowRePassword] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
   const [verificationCode, setVerificationCode] = useState<string>("");
-  const [isSendingCode, setIsSendingCode] = useState<boolean>(false); // 추가
   const [step, setStep] = useState<number>(1);
+
+  // forgotPassword
+  const [resetEmail, setResetEmail] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
+  const [resetStep, setResetStep] = useState<number>(1); // 1: 이메일 입력, 2: 코드 입력, 3: 새 비밀번호
+
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -54,11 +62,14 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
     if (!isModalOpen) {
       setMode("login");
       setStep(1);
+      setResetStep(1);
       setEmail("");
       setPassword("");
       setRePassword("");
       setNickname("");
       setVerificationCode("");
+      setResetEmail("");
+      setNewPassword("");
       setRememberMe(false);
       setErrors({});
     }
@@ -158,7 +169,6 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
         return;
       }
 
-      setIsSendingCode(true);
       setErrors({});
 
       try {
@@ -178,8 +188,6 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
         setErrors({});
       } catch (err: any) {
         setErrors({ email: err.message || "Failed to send verification code" });
-      } finally {
-        setIsSendingCode(false);
       }
     } else {
       // Step 2: 인증 코드 검증
@@ -239,8 +247,6 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
       setErrors({ verificationCode: "Email is required" });
       return;
     }
-
-    setIsSendingCode(true);
     setErrors({});
 
     try {
@@ -256,8 +262,113 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
       }
     } catch (err: any) {
       setErrors({ verificationCode: err.message || "Failed to resend code" });
-    } finally {
-      setIsSendingCode(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (resetStep === 1) {
+      // Step 1: 이메일로 인증 코드 전송
+      const emailError = validateEmail(resetEmail);
+      if (emailError) {
+        setErrors({ email: emailError });
+        return;
+      }
+
+      setErrors({});
+
+      try {
+        const response = await fetch("/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: resetEmail }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to send verification code");
+        }
+
+        setResetStep(2);
+      } catch (err: any) {
+        setErrors({ email: err.message || "Failed to send verification code" });
+      }
+    } else if (resetStep === 2) {
+      // Step 2: 인증 코드 검증
+      if (!verificationCode) {
+        setErrors({ verificationCode: "Verification code is required" });
+        return;
+      }
+
+      setIsLoading(true);
+      setErrors({});
+
+      try {
+        const response = await fetch("/api/auth/verify-reset-code", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: resetEmail, code: verificationCode }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Invalid verification code");
+        }
+
+        setResetStep(3);
+      } catch (err: any) {
+        setErrors({ verificationCode: err.message });
+      } finally {
+        setIsLoading(false);
+      }
+    } else if (resetStep === 3) {
+      // Step 3: 새 비밀번호 설정
+      const newErrors: FieldErrors = {};
+
+      const passwordError = validatePassword(newPassword);
+      if (passwordError) newErrors.password = passwordError;
+
+      const confirmPasswordError = validateRePassword(
+        confirmNewPassword,
+        newPassword,
+      );
+      if (confirmPasswordError) newErrors.rePassword = confirmPasswordError;
+
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+      }
+
+      setIsLoading(true);
+      setErrors({});
+
+      try {
+        const response = await fetch("/api/auth/reset-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: resetEmail,
+            code: verificationCode,
+            newPassword: newPassword,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to reset password");
+        }
+
+        setMode("login");
+        setResetStep(1);
+        setResetEmail("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+        setVerificationCode("");
+        setErrors({});
+      } catch (err: any) {
+        setErrors({ password: err.message || "Failed to reset password" });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -276,7 +387,7 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
         </Button>
       </DialogTrigger>
       <DialogContent>
-        {mode === "login" ? (
+        {mode === "login" && (
           <>
             <DialogHeader>
               <DialogTitle>Welcome to Airvent</DialogTitle>
@@ -332,7 +443,6 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
                   )}
                 </div>
                 <div className="flex justify-between">
-                  {/* TODO: 쿠키 설정 */}
                   <div className="flex items-center gap-2 text-sm text-[#6B7280]">
                     <Checkbox
                       checked={rememberMe}
@@ -342,8 +452,14 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
                     />
                     Remember me
                   </div>
-                  {/* TODO: 비밀번호 변경 로직 */}
-                  <div className="cursor-pointer text-sm font-semibold text-[#10B981] hover:underline">
+                  <div
+                    className="cursor-pointer text-sm font-semibold text-[#10B981] hover:underline"
+                    onClick={() => {
+                      setMode("forgotPassword");
+                      setResetStep(1);
+                      setErrors({});
+                    }}
+                  >
                     Forgot password?
                   </div>
                 </div>
@@ -388,7 +504,8 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
               </div>
             </DialogFooter>
           </>
-        ) : (
+        )}
+        {mode === "signup" && (
           <>
             <DialogHeader>
               <DialogTitle>Create an account</DialogTitle>
@@ -537,6 +654,170 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
                   </Button>
                 </>
               )}
+            </div>
+          </>
+        )}
+        {mode === "forgotPassword" && (
+          <>
+            <DialogHeader>
+              <DialogTitle>Reset Password</DialogTitle>
+              <DialogDescription>
+                {resetStep === 1 &&
+                  "Enter your email to receive a verification code"}
+                {resetStep === 2 && "Enter the 6-digit code sent to your email"}
+                {resetStep === 3 && "Enter your new password"}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="flex w-full flex-col items-center gap-5">
+              {resetStep === 1 && (
+                <>
+                  <Input
+                    placeholder="Email"
+                    className="w-full"
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => {
+                      setResetEmail(e.target.value);
+                      if (errors.email) clearFieldError("email");
+                    }}
+                  />
+                  {errors.email && (
+                    <span className="text-xs text-red-500">{errors.email}</span>
+                  )}
+                  <Button
+                    size="lg"
+                    className="w-full bg-[#111827] hover:bg-[#111827]/90"
+                    onClick={handleForgotPassword}
+                  >
+                    Send Code
+                  </Button>
+                </>
+              )}
+
+              {resetStep === 2 && (
+                <>
+                  <div className="w-full">
+                    <Input
+                      placeholder="6-digit Code"
+                      className="w-full"
+                      value={verificationCode}
+                      onChange={(e) => {
+                        setVerificationCode(e.target.value);
+                        if (errors.verificationCode)
+                          clearFieldError("verificationCode");
+                      }}
+                      maxLength={6}
+                      disabled={isLoading}
+                    />
+                    {errors.verificationCode && (
+                      <span className="text-xs text-red-500">
+                        {errors.verificationCode}
+                      </span>
+                    )}
+                  </div>
+                  <Button
+                    size="lg"
+                    className="w-full bg-[#111827] hover:bg-[#111827]/90"
+                    onClick={handleForgotPassword}
+                    disabled={isLoading}
+                  >
+                    Verify Code
+                  </Button>
+                  <button
+                    className="text-sm font-semibold text-[#10B981] hover:underline"
+                    onClick={handleResendCode}
+                  >
+                    Resend Code
+                  </button>
+                </>
+              )}
+
+              {resetStep === 3 && (
+                <>
+                  <div className="flex w-full flex-col gap-4">
+                    <div className="relative w-full">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="New Password (At least 6 characters)"
+                        className="w-full pr-10"
+                        value={newPassword}
+                        onChange={(e) => {
+                          setNewPassword(e.target.value);
+                          if (errors.password) clearFieldError("password");
+                        }}
+                        disabled={isLoading}
+                      />
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        className="absolute top-1/2 right-3 -translate-y-1/2 text-[#6B7280] outline-none hover:text-[#111827]"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? (
+                          <EyeOff size={16} />
+                        ) : (
+                          <Eye size={16} />
+                        )}
+                      </button>
+                      {errors.password && (
+                        <span className="text-xs text-red-500">
+                          {errors.password}
+                        </span>
+                      )}
+                    </div>
+                    <div className="relative w-full">
+                      <Input
+                        type={showRePassword ? "text" : "password"}
+                        placeholder="Confirm New Password"
+                        className="w-full pr-10"
+                        value={confirmNewPassword}
+                        onChange={(e) => {
+                          setConfirmNewPassword(e.target.value);
+                          if (errors.rePassword) clearFieldError("rePassword");
+                        }}
+                        disabled={isLoading}
+                      />
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        className="absolute top-1/2 right-3 -translate-y-1/2 text-[#6B7280] outline-none hover:text-[#111827]"
+                        onClick={() => setShowRePassword((prev) => !prev)}
+                      >
+                        {showRePassword ? (
+                          <EyeOff size={16} />
+                        ) : (
+                          <Eye size={16} />
+                        )}
+                      </button>
+                      {errors.rePassword && (
+                        <span className="text-xs text-red-500">
+                          {errors.rePassword}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    size="lg"
+                    className="w-full bg-[#111827] hover:bg-[#111827]/90"
+                    onClick={handleForgotPassword}
+                    disabled={isLoading}
+                  >
+                    Reset Password
+                  </Button>
+                </>
+              )}
+
+              <button
+                className="text-sm text-[#6B7280] hover:underline"
+                onClick={() => {
+                  setMode("login");
+                  setResetStep(1);
+                  setErrors({});
+                }}
+              >
+                Back to Sign In
+              </button>
             </div>
           </>
         )}
