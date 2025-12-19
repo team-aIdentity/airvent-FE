@@ -398,20 +398,22 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
             <div className="flex w-full flex-col items-center gap-5">
               <div className="text-lg font-bold">Sign in with Email</div>
               <div className="flex w-full flex-col gap-4">
-                <Input
-                  placeholder="Email"
-                  className="w-full"
-                  type="email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (errors.email) clearFieldError("email");
-                  }}
-                  disabled={isLoading}
-                />
-                {errors.email && (
-                  <span className="text-xs text-red-500">{errors.email}</span>
-                )}
+                <div>
+                  <Input
+                    placeholder="Email"
+                    className="w-full"
+                    type="email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (errors.email) clearFieldError("email");
+                    }}
+                    disabled={isLoading}
+                  />
+                  {errors.email && (
+                    <span className="text-xs text-red-500">{errors.email}</span>
+                  )}
+                </div>
                 <div className="relative w-full">
                   <Input
                     type={showPassword ? "text" : "password"}

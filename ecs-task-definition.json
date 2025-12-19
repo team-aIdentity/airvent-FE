@@ -35,6 +35,26 @@
         {
           "name": "JWT_SECRET",
           "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:975950720014:secret:airvent/jwt-secret-XUYbJh"
+        },
+        {
+          "name": "SMTP_HOST",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:975950720014:secret:airvent/smtp-host-wHIBcE"
+        },
+        {
+          "name": "SMTP_PORT",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:975950720014:secret:airvent/smtp-port-cyAgHt"
+        },
+        {
+          "name": "SMTP_USER",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:975950720014:secret:airvent/smtp-user-FpEtwh"
+        },
+        {
+          "name": "SMTP_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:975950720014:secret:airvent/smtp-password-Vcyr57"
+        },
+        {
+          "name": "SMTP_FROM",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-2:975950720014:secret:airvent/smtp-from-FyQ3CS"
         }
       ],
       "logConfiguration": {
