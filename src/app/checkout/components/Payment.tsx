@@ -38,8 +38,7 @@ const Payment = ({ onNext }: { onNext: (orderId: string) => void }) => {
   }
 
   const helioConfig: HelioEmbedConfig = {
-    // paylinkId: paylinkIds[productType] || paylinkIds["test"],
-    paylinkId: paylinkIds["test"],
+    paylinkId: paylinkIds[productType] || paylinkIds["test"],
     theme: { themeMode: "light" },
     primaryColor: "#10B981",
     neutralColor: "#5A6578",

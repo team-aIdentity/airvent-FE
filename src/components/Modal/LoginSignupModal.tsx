@@ -36,7 +36,6 @@ const LoginSignupModal: React.FC<LoginSignupModalProps> = ({
   mode,
   setMode,
 }) => {
-  console.log(mode);
   // signup & login
   const { login, signup } = useUser();
   const [email, setEmail] = useState<string>("");

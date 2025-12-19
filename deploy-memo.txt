@@ -1,0 +1,160 @@
+# DB Subnet Group 생성
+aws rds create-db-subnet-group \
+  --db-subnet-group-name airvent-db-subnet-group \
+  --db-subnet-group-description "Subnet group for Airvent DB" \
+  --subnet-ids subnet-0ba8321ee0737effe subnet-0acb3296d50a0b504 subnet-0a5df8daa16fb268c \
+  --region ap-northeast-2
+
+# RDS 보안 그룹 생성
+aws ec2 create-security-group \
+  --group-name airvent-rds-sg \
+  --description "Security group for Airvent RDS" \
+  --vpc-id vpc-03e342623572eabcf \
+  --region ap-northeast-2
+
+# RDS 인스턴스 생성
+aws rds create-db-instance \
+  --db-instance-identifier airvent-db \
+  --db-instance-class db.t3.micro \
+  --engine postgres \
+  --engine-version 15.15 \
+  --master-username airvent \
+  --master-user-password Cheoeum1357! \
+  --allocated-storage 20 \
+  --vpc-security-group-ids sg-0b40ed549d3be73fc \
+  --db-subnet-group-name airvent-db-subnet-group \
+  --backup-retention-period 7 \
+  --no-publicly-accessible \
+  --region ap-northeast-2
+
+RDS_ENDPOINT=airvent-db.cl8mkg08ufbb.ap-northeast-2.rds.amazonaws.com
+
+# JWT_SECRET 생성 (랜덤 문자열 또는 기존 값)
+aws secretsmanager create-secret \
+  --name airvent/jwt-secret \
+  --secret-string "my-jwt-secret-key-here-for-airvent" \
+  --region ap-northeast-2
+
+{
+    "ARN": "arn:aws:secretsmanager:ap-northeast-2:975950720014:secret:airvent/jwt-secret-XUYbJh",
+    "Name": "airvent/jwt-secret",
+    "VersionId": "c4e9d82e-390e-4da2-b4f0-cd89b494a90d"
+}
+
+# ECR Repository 생성
+aws ecr create-repository \
+  --repository-name airvent-nextjs \
+  --region ap-northeast-2 \
+  --image-scanning-configuration scanOnPush=true
+
+# 리포지토리 URI 확인 (나중에 사용)
+aws ecr describe-repositories \
+  --repository-names airvent-nextjs \
+  --region ap-northeast-2 \
+  --query 'repositories[0].repositoryUri' \
+  --output text
+
+REPOSITORY_URI=975950720014.dkr.ecr.ap-northeast-2.amazonaws.com/airvent-nextjs
+
+# DATABASE_URL 형식
+# postgresql://airvent:Cheoeum1357!@airvent-db.xxxxx.ap-northeast-2.rds.amazonaws.com:5432/airvent
+
+# Target Group 생성
+aws elbv2 create-target-group \
+  --name airvent-tg \
+  --protocol HTTP \
+  --port 3000 \
+  --vpc-id vpc-03e342623572eabcf \
+  --target-type ip \
+  --health-check-path /api/health \
+  --health-check-interval-seconds 30 \
+  --health-check-timeout-seconds 5 \
+  --healthy-threshold-count 2 \
+  --unhealthy-threshold-count 3 \
+  --region ap-northeast-2
+
+# ALB 보안 그룹 생성
+aws ec2 create-security-group \
+  --group-name airvent-alb-sg \
+  --description "Security group for Airvent ALB" \
+  --vpc-id vpc-03e342623572eabcf \
+  --region ap-northeast-2
+
+ALB_SG_ID=sg-076b14af3b55ce481
+
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-076b14af3b55ce481 \
+  --protocol tcp \
+  --port 80 \
+  --cidr 0.0.0.0/0 \
+  --region ap-northeast-2
+
+# HTTPS (443) 인바운드 규칙
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-076b14af3b55ce481 \
+  --protocol tcp \
+  --port 443 \
+  --cidr 0.0.0.0/0 \
+  --region ap-northeast-2
+
+# ECS Task용 보안 그룹 생성
+aws ec2 create-security-group \
+  --group-name airvent-ecs-sg \
+  --description "Security group for Airvent ECS Tasks" \
+  --vpc-id vpc-03e342623572eabcf \
+  --region ap-northeast-2
+
+ECS_SG_ID=sg-0a55112427388d1c2
+
+# ALB에서 ECS로의 인바운드 규칙 (ALB 보안 그룹에서만 허용)
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-0a55112427388d1c2 \
+  --protocol tcp \
+  --port 3000 \
+  --source-group sg-076b14af3b55ce481 \
+  --region ap-northeast-2
+
+
+
+# Target Group ARN 확인 (ECS Service 생성 시 필요)
+aws elbv2 describe-target-groups \
+  --names airvent-tg \
+  --region ap-northeast-2 \
+  --query 'TargetGroups[0].TargetGroupArn' \
+  --output text
+
+arn:aws:elasticloadbalancing:ap-northeast-2:975950720014:targetgroup/airvent-tg/e51745dc316f693f
+
+# ALB ARN 확인
+aws elbv2 describe-load-balancers \
+  --names airvent-alb \
+  --region ap-northeast-2 \
+  --query 'LoadBalancers[0].LoadBalancerArn' \
+  --output text
+
+arn:aws:elasticloadbalancing:ap-northeast-2:975950720014:loadbalancer/app/airvent-alb/bdc28a136adbeb9c
+
+# CERTIFICATE_ARN을 위에서 확인한 값으로 변경
+CERTIFICATE_ARN=arn:aws:acm:ap-northeast-2:975950720014:certificate/359abd84-3daf-460b-838c-58962383d2e7
+
+aws acm describe-certificate \
+  --certificate-arn arn:aws:acm:ap-northeast-2:975950720014:certificate/359abd84-3daf-460b-838c-58962383d2e7 \
+  --region ap-northeast-2 \
+  --query 'Certificate.Status' \
+  --output text
+
+ALB_ARN=arn:aws:elasticloadbalancing:ap-northeast-2:975950720014:loadbalancer/app/airvent-alb/bdc28a136adbeb9c
+TARGET_GROUP_ARN=$(aws elbv2 describe-target-groups \
+  --names airvent-tg \
+  --region ap-northeast-2 \
+  --query 'TargetGroups[0].TargetGroupArn' \
+  --output text)
+
+# HTTPS Listener 생성
+aws elbv2 create-listener \
+  --load-balancer-arn arn:aws:elasticloadbalancing:ap-northeast-2:975950720014:loadbalancer/app/airvent-alb/bdc28a136adbeb9c \
+  --protocol HTTPS \
+  --port 443 \
+  --certificates CertificateArn=arn:aws:acm:ap-northeast-2:975950720014:certificate/359abd84-3daf-460b-838c-58962383d2e7 \
+  --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN \
+  --region ap-northeast-2

@@ -21,7 +21,7 @@ export default function CheckoutPage({ params }: Props) {
   const router = useRouter();
   const { user, isLoading } = useUser();
 
-  const [step, setStep] = useState<number>(2); // 1: Payment, 2: Shipping
+  const [step, setStep] = useState<number>(1); // 1: Payment, 2: Shipping
   const [orderId, setOrderId] = useState<string | null>(
     "cmj47bdel000134m79m9926f5",
   );

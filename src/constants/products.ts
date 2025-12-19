@@ -4,7 +4,7 @@ export const PRODUCTS = {
     description:
       "Next-generation decentralized air quality monitoring device with crypto rewards",
     price: 499,
-    discount: 30,
+    discount: 20,
     keyFeatures: [
       "Real-time air quality monitoring",
       "Earn crypto tokens daily",
@@ -17,7 +17,7 @@ export const PRODUCTS = {
     description:
       "Next-generation decentralized air quality monitoring device with crypto rewards",
     price: 799,
-    discount: 30,
+    discount: 20,
     keyFeatures: [
       "Real-time air quality monitoring",
       "Earn crypto tokens daily",

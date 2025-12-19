@@ -132,7 +132,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 ${price}
               </div>
               <div className="flex h-6 w-fit items-center rounded-xl bg-[#EF4444] px-[6px] text-[9px] font-semibold text-white lg:text-[10px]">
-                30% OFF
+                20% OFF
               </div>
             </div>
           </div>
