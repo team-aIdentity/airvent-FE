@@ -1,14 +1,22 @@
-"use client"
+"use client";
 
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 
 import { useParams } from "next/navigation";
 import { useProduct } from "@/hooks/useProduct";
 import { useUser } from "@/contexts/UserContext";
 
-import { HelioCheckout, type HelioEmbedConfig } from "@heliofi/checkout-react";
+const HelioCheckout = dynamic(
+  () => import("@heliofi/checkout-react").then((mod) => mod.HelioCheckout),
+  { 
+    ssr: false,
+    loading: () => <div className="h-40 flex items-center justify-center">Loading payment...</div>
+  }
+);
+import { type HelioEmbedConfig } from "@heliofi/checkout-react";
 
 import { Loading } from "@/components/Layout/Loading";
 import {
