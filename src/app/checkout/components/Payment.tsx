@@ -9,14 +9,7 @@ import { useParams } from "next/navigation";
 import { useProduct } from "@/hooks/useProduct";
 import { useUser } from "@/contexts/UserContext";
 
-const HelioCheckout = dynamic(
-  () => import("@heliofi/checkout-react").then((mod) => mod.HelioCheckout),
-  { 
-    ssr: false,
-    loading: () => <div className="h-40 flex items-center justify-center">Loading payment...</div>
-  }
-);
-import { type HelioEmbedConfig } from "@heliofi/checkout-react";
+import { HelioCheckout, type HelioEmbedConfig } from "@heliofi/checkout-react";
 
 import { Loading } from "@/components/Layout/Loading";
 import {
